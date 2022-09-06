@@ -9,8 +9,8 @@ import (
 	ruTrans "github.com/go-playground/validator/v10/translations/ru"
 	"github.com/iancoleman/strcase"
 	"gorm.io/gorm"
-	"rest/database/redis"
 	"log"
+	"rest/database/redis"
 )
 
 var validate *validator.Validate
@@ -26,10 +26,7 @@ func Init(db *gorm.DB) {
 	RegisterCustomValidations(newVl.validate, db)
 
 	for _, locale := range []string{"ru", "en"} {
-		t, found := newVl.uni.GetTranslator(locale)
-		if !found {
-			log.Println("locale not found", locale)
-		}
+		t, _ := newVl.uni.GetTranslator(locale)
 		err := RegisterCustomTranslations(newVl.validate, t)
 		if err != nil {
 			log.Println(err)

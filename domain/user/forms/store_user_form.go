@@ -6,26 +6,6 @@ import (
 	"time"
 )
 
-type StoreUserForm struct {
-	Password  string
-	Email     string
-	RoleID    int
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
-}
-
-func UserBinding(entity *NewUser) *models.User {
-	return &models.User{
-		Name:     entity.Name,
-		Phone:    entity.Phone,
-		RoleID:   1,
-		Password: entity.Password,
-		Email:    entity.Email,
-		StatusID: models.Activated,
-	}
-}
-
 func UserBindingResponse(entity *models.User, token string) *responses.UserResponse {
 	return &responses.UserResponse{
 		ID:        entity.ID,
@@ -35,18 +15,6 @@ func UserBindingResponse(entity *models.User, token string) *responses.UserRespo
 		Role:      entity.Role,
 		Status:    *responses.GetStatus(entity.StatusID),
 		Token:     token,
-		CreatedAt: entity.CreatedAt,
-		UpdatedAt: entity.UpdatedAt,
-	}
-}
-
-func UserModelBindingResponse(entity *models.User) *responses.UserModelResponse {
-	return &responses.UserModelResponse{
-		ID:        entity.ID,
-		Name:      entity.Name,
-		Email:     entity.Email,
-		Phone:     entity.Phone,
-		Role:      entity.Role,
 		CreatedAt: entity.CreatedAt,
 		UpdatedAt: entity.UpdatedAt,
 	}
@@ -86,6 +54,7 @@ type NewUser struct {
 	Name     string `json:"name" validate:"required"`
 	Phone    string `json:"phone"`
 	Password string `json:"password" validate:"required,gte=6"`
+	RoleID   uint   `json:"roleID" validate:"omitempty,exists:roles-id"`
 	Email    string `json:"email" validate:"required,doesnt_exist=users-email"`
 	StatusID int    `json:"statusId"`
 }

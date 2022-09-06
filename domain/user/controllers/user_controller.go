@@ -7,7 +7,9 @@ import (
 	"rest/app/middleware"
 	"rest/app/validators"
 	"rest/domain/user/forms"
-	"rest/domain/user/repositories"
+	"rest/domain/user/models"
+	userResp "rest/domain/user/responses"
+	"rest/domain/user/services"
 	"rest/router/lang"
 	"strconv"
 
@@ -15,26 +17,65 @@ import (
 )
 
 type Controller struct {
-	repo repositories.UserRepository
+	us services.IUserService
 }
 
-func NewController(repo repositories.UserRepository) *Controller {
-	return &Controller{repo: repo}
+func NewController(uServ services.IUserService) *Controller {
+	return &Controller{us: uServ}
+}
+
+func (c *Controller) Index(w http.ResponseWriter, r *http.Request) {
+	params := responses.ParamsMapFromRequest(r)
+	_, ok := params["all"]
+
+	users := make([]models.User, 0)
+	var err error
+
+	if ok {
+		users, err = c.us.GetUsers(params)
+		if err != nil {
+			responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
+			return
+		}
+		responses.ResponseCollection(w, users)
+		return
+	}
+
+	paginate, pgErr := c.us.Paginate(params)
+	if pgErr != nil {
+		responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
+		return
+	}
+
+	err = responses.CreateResponse(w, paginate, http.StatusOK)
+	if err != nil {
+		responses.GenerateErrorResponse(w, err.Error(), nil)
+		return
+	}
 }
 
 func (c *Controller) Profile(w http.ResponseWriter, r *http.Request) {
 	profile := middleware.CtxValue(r.Context())
-	if profile != nil {
+	if profile == nil {
 		responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.resp_error"), nil)
 		return
 	}
-	responses.ResponseResource(w, *profile)
+	responses.ResponseResource(w, userResp.BindingUserModelResponse(*profile))
 }
 
 func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 	userForm := forms.NewUser{}
 
-	_ = json.NewDecoder(r.Body).Decode(&userForm)
+	decodeErr := json.NewDecoder(r.Body).Decode(&userForm)
+
+	if decodeErr != nil {
+		responses.GenerateErrorResponse(w,
+			"Ошибка десериализации тела запроса",
+			map[string]interface{}{
+				"message": decodeErr.Error(),
+			})
+		return
+	}
 
 	errsVal, errVal := validators.Validate(userForm)
 	if errVal != nil {
@@ -42,36 +83,12 @@ func (c *Controller) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userModel, errRepo := c.repo.Create(userForm)
+	userModel, errRepo := c.us.AddUser(userForm)
 	if errRepo != nil {
 		responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
 		return
 	}
 	responses.ResponseResource(w, *userModel)
-}
-
-func (c *Controller) List(w http.ResponseWriter, r *http.Request) {
-	params := responses.ParamsMapFromRequest(r)
-	_, ok := params["all"]
-	if ok {
-		users, errRepo := c.repo.List(params)
-		if errRepo != nil {
-			responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
-			return
-		}
-
-		responses.ResponseCollection(w, users)
-	} else {
-		users, errRepo := c.repo.Paginate(params)
-		if errRepo != nil {
-			responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
-			return
-		}
-		errorRs := responses.CreateResponse(w, users, http.StatusOK)
-		if errorRs != nil {
-			responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.resp_error"), nil)
-		}
-	}
 }
 
 func (c *Controller) Show(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +98,7 @@ func (c *Controller) Show(w http.ResponseWriter, r *http.Request) {
 		responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.syntax_error"), nil)
 		return
 	}
-	user, errRepo := c.repo.ShowModel(uint(idInt))
+	user, errRepo := c.us.ShowUser(uint(idInt))
 	if errRepo != nil {
 		responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
 		return
@@ -97,7 +114,7 @@ func (c *Controller) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errRepo := c.repo.Delete(uint(idInt))
+	errRepo := c.us.DestroyUser(uint(idInt))
 	if errRepo != nil {
 		responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
 		return
@@ -109,7 +126,16 @@ func (c *Controller) Update(w http.ResponseWriter, r *http.Request) {
 	user := middleware.CtxValue(r.Context())
 	userUpdateForm := forms.UpdateUser{Id: user.ID}
 
-	_ = json.NewDecoder(r.Body).Decode(&userUpdateForm)
+	decodeErr := json.NewDecoder(r.Body).Decode(&userUpdateForm)
+
+	if decodeErr != nil {
+		responses.GenerateErrorResponse(w,
+			"Ошибка десериализации тела запроса",
+			map[string]interface{}{
+				"message": decodeErr.Error(),
+			})
+		return
+	}
 
 	errsVal, errVal := validators.Validate(userUpdateForm)
 	if errVal != nil {
@@ -117,7 +143,7 @@ func (c *Controller) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userUpdate, errRepo := c.repo.UpdateModel(user.ID, userUpdateForm)
+	userUpdate, errRepo := c.us.UpdateUser(user.ID, userUpdateForm)
 	if errRepo != nil {
 		responses.GenerateErrorResponse(w, lang.GetTranslator().Trans("messages.db_error"), nil)
 		return

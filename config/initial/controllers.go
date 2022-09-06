@@ -14,10 +14,10 @@ type Controllers struct {
 	UserController *userControllers.Controller
 }
 
-func LoadControllers(s *Services, db *gorm.DB) {
+func LoadControllers(s *Services, _ *gorm.DB) {
 	controllers = &Controllers{
 		AuthController: userControllers.NewAuthController(s.Repositories.AuthRepo, s.Repositories.UserRepo),
-		UserController: userControllers.NewController(s.Repositories.UserRepo),
+		UserController: userControllers.NewController(s.UserService),
 	}
 }
 

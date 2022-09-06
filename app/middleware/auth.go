@@ -2,13 +2,12 @@ package middleware
 
 import (
 	"context"
-	"github.com/casbin/casbin"
 	"golang.org/x/exp/slices"
+	"net/http"
 	"rest/app/helpers/auth"
 	"rest/database/redis"
 	"rest/domain/user/models"
 	"rest/domain/user/repositories"
-	"net/http"
 )
 
 var UserCtxKey = &contextKey{"user"}
@@ -42,8 +41,8 @@ func Auth(repo repositories.UserRepository) func(http.Handler) http.Handler {
 				return
 			}
 
-			u, err := repo.Show(claims.UserID)
-			if err != nil {
+			u, showErr := repo.FindById(claims.UserID)
+			if showErr != nil {
 				http.Error(w, "user not found", http.StatusUnauthorized)
 				return
 			}
@@ -51,35 +50,6 @@ func Auth(repo repositories.UserRepository) func(http.Handler) http.Handler {
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 		})
-	}
-}
-
-func RBAC(e *casbin.Enforcer) func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			user := CtxValue(r.Context())
-			var role string
-			if user == nil {
-				role = "anonymous"
-			} else {
-				role = user.Role.Name
-			}
-			// casbin rule enforcing
-			res, err := e.EnforceSafe(role, r.URL.Path, r.Method)
-			if err != nil {
-				//	fmt.Println(err)
-				http.Error(w, "authorization error occurred", http.StatusInternalServerError)
-				return
-			}
-			if res {
-				next.ServeHTTP(w, r)
-			} else {
-				http.Error(w, "current user has no access to requested resource", http.StatusForbidden)
-				return
-			}
-		}
-
-		return http.HandlerFunc(fn)
 	}
 }
 

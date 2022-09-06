@@ -26,17 +26,6 @@ type UserShortResponse struct {
 	Email  string    `json:"email"`
 }
 
-func BindingUserShortModelResponse(entity models.User) *UserShortResponse {
-	return &UserShortResponse{
-		ID:     entity.ID,
-		Name:   entity.Name,
-		Phone:  entity.Phone,
-		Role:   entity.Role,
-		Status: *GetStatus(entity.StatusID),
-		Email:  entity.Email,
-	}
-}
-
 type Status struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
@@ -80,4 +69,13 @@ func BindingUserModelResponse(entity models.User) *UserModelResponse {
 		CreatedAt: entity.CreatedAt,
 		UpdatedAt: entity.UpdatedAt,
 	}
+}
+
+func BindingUserListResponse(entities []models.User) []UserModelResponse {
+	var userRes []UserModelResponse
+	for _, v := range entities {
+		userRes = append(userRes, *BindingUserModelResponse(v))
+	}
+
+	return userRes
 }

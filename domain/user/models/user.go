@@ -1,11 +1,11 @@
 package models
 
 import (
+	"log"
 	"rest/app/helpers/hash"
 	"rest/app/helpers/type_helpers/slices"
 	"rest/app/helpers/type_helpers/str"
 	role "rest/domain/role/models"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -42,25 +42,23 @@ func (u *User) BeforeSave(_ *gorm.DB) (err error) {
 }
 
 func Filter(db *gorm.DB, filters map[string]string) *gorm.DB {
-	dbQuery := db.Where("deleted_at IS NULL").Preload("Role")
-
 	id, idOk := filters["id"]
 	if idOk && str.NotEmpty(id) {
 		idInt, err := strconv.Atoi(id)
 		if err != nil {
 			log.Println(err)
 		}
-		dbQuery = dbQuery.Where("id = ?", uint(idInt))
+		db = db.Where("id = ?", uint(idInt))
 	}
 
 	name, nameOk := filters["name"]
 	if nameOk && str.NotEmpty(name) {
-		dbQuery = dbQuery.Where("name ILIKE ?", "%"+name+"%")
+		db = db.Where("name ILIKE ?", "%"+name+"%")
 	}
 
 	email, emailOk := filters["email"]
 	if emailOk && str.NotEmpty(email) {
-		dbQuery = dbQuery.Where("email ILIKE ?", "%"+email+"%")
+		db = db.Where("email ILIKE ?", "%"+email+"%")
 	}
 
 	roleID, roleIDOk := filters["roleId"]
@@ -69,19 +67,19 @@ func Filter(db *gorm.DB, filters map[string]string) *gorm.DB {
 		if err != nil {
 			log.Println(err)
 		}
-		dbQuery = dbQuery.Where("role_id = ?", uint(idInt))
+		db = db.Where("role_id = ?", uint(idInt))
 	}
 
 	phone, phoneOk := filters["phone"]
 	if phoneOk && str.NotEmpty(phone) {
-		dbQuery = dbQuery.Where("phone ILIKE ?", "%"+phone+"%")
+		db = db.Where("phone ILIKE ?", "%"+phone+"%")
 	}
 
-	return dbQuery
+	return db
 }
 
 func Sort(db *gorm.DB, params map[string]string) *gorm.DB {
-	dbQuery := db
+
 	sort, sortOk := params["sort"]
 	stringSortableFields := []string{"name", "email", "phone"}
 	intSortableFields := []string{"id", "roleId"}
@@ -89,11 +87,11 @@ func Sort(db *gorm.DB, params map[string]string) *gorm.DB {
 	sortableParams := []string{"asc", "desc"}
 
 	if sortOk && slices.StringContain(stringSortableFields, sort) && sortByOk && slices.StringContain(sortableParams, sortBy) {
-		dbQuery = dbQuery.Order("lower(" + strcase.ToSnake(sort) + ")  " + strings.ToUpper(sortBy))
-		return dbQuery
+		db = db.Order("lower(" + strcase.ToSnake(sort) + ")  " + strings.ToUpper(sortBy))
+		return db
 	} else if sortOk && slices.StringContain(intSortableFields, sort) && sortByOk && slices.StringContain(sortableParams, sortBy) {
-		dbQuery = dbQuery.Order(strcase.ToSnake(sort) + " " + strings.ToUpper(sortBy))
-		return dbQuery
+		db = db.Order(strcase.ToSnake(sort) + " " + strings.ToUpper(sortBy))
+		return db
 	}
-	return dbQuery.Order("users.id desc")
+	return db.Order("users.id desc")
 }

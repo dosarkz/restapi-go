@@ -1,14 +1,14 @@
-# Rest api
+# Simple rest api (Gorilla/mux,ddd,gorm,jwt) 
+This project a basic example for personal use, I hope it will be useful =)
 
-
-# Modules
-- Auth JWT
-- RBAC casbin
-- Playground validation
-- Mux routing
-- Localization
+# Features
+- JWT authentication
+- [Go-playground validator](https://github.com/go-playground/validator)
+- [Gorilla/mux](https://github.com/gorilla/mux)
+- Localization and response translation
 - Session
-- ORM gorm
+- Database migrations
+- [GORM ORM](https://gorm.io/index.html)
 - Logging and monitoring
 - Rate limits
 
@@ -41,13 +41,6 @@ Make sure that files of docker has unix format
 - DATABASE_HOST=localhost
 - DATABASE_PORT=5411 // your DOCKER_POSTGRES_PORT
 - APP_URL=localhost
-
-# Casbin
-Role Based Access Control (RBAC) implemented with [casbin](https://casbin.org/docs/en/syntax-for-models)
-- ./auth_model.conf - file with ACL configs
-- ./policy.csv - file with policy rules
-
-All routes locked by default, so we should open root path prefix and close concrete endpoints. Deny rules override allow rules
 
 # Locales and translations
 Available Russian and English locales and validations
