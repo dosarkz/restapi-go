@@ -12,7 +12,7 @@ type Controller struct {
 
 func (*Controller) Index(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	_, err := fmt.Fprintf(w, "Welcome to resr API")
+	_, err := fmt.Fprintf(w, "Welcome to rest API")
 	if err != nil {
 		return
 	}
