@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  database:
+    build: docker/postgres
+    container_name: rest_test_db
+    restart: always
+    networks:
+      - rest
+    ports:
+      - "${DOCKER_POSTGRES_PORT:-5421}:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_DB_TEST}"]
+      interval: 5s
+      timeout: 200s
+      retries: 200
+    environment:
+      - POSTGRES_TEST_DB=$DATABASE_DB_TEST
+      - POSTGRES_MAIN_DB=$DATABASE_DB
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+  redis:
+    container_name: rest_test_redis
+    hostname: rest_redis
+    image: redis:6-alpine3.14
+    ports:
+      - "${DOCKER_REDIS_PORT:-6378}:6379"
+    restart: unless-stopped
+    networks:
+      - rest
+  app:
+    container_name: rest_test_app
+    env_file: .env
+    networks:
+      - rest
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "${DOCKER_APP_PORT:-8080}:${APP_PORT:-8080}"
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+      target: tests
+    volumes:
+      - .:/go/src/backend/
+volumes:
+  data:
+    driver: "local"
+networks:
+  rest:
+    driver: "bridge"
+

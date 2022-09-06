@@ -1,0 +1,56 @@
+schemas:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          name:
+            type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      email:
+        type: string
+      status:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          title:
+            type: string
+  StoreUser:
+    properties:
+      name:
+        type: string
+      phone:
+        type: string
+      password:
+        type: string
+      email:
+        type: string
+  UpdateUser:
+    properties:
+      name:
+        type: string
+      phone:
+        type: string
+      password:
+        type: string
+      email:
+        type: string
+responses:
+  UnauthorizedError:
+    description: Access token is missing or invalid

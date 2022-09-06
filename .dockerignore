@@ -1,0 +1,7 @@
+.idea
+.git
+.gitignore
+README.md
+.env.example
+storage
+public/storage

@@ -1,0 +1,85 @@
+schemas:
+  Manager:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          name:
+            type: string
+      status:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          title:
+            type: string
+      counterparty:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          title:
+            type: string
+      warehouse:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            title:
+              type: string
+            description:
+              type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      email:
+        type: string
+  StoreManager:
+    properties:
+      name:
+        type: string
+      phone:
+        type: string
+      password:
+        type: string
+        required: true
+      email:
+        type: string
+        required: true
+      counterpartyId:
+        type: integer
+        format: int64
+        required: true
+      warehouseIds:
+        type: array
+        items:
+          type: integer
+        required: true
+  UpdateManager:
+    properties:
+      name:
+        type: string
+      phone:
+        type: string
+      email:
+        type: string
+responses:
+  UnauthorizedError:
+    description: Access token is missing or invalid

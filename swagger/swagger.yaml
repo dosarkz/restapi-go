@@ -1,0 +1,227 @@
+openapi: 3.0.1
+info:
+  title: rest backend API
+  description: Api rest GO
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: info@qlt.kz
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://inv-api.qltlab.kz/api/v1
+  - url: http://inv-api.qltlab.kz/api/v1
+  - url: http://localhost:8081/api/v1
+tags:
+  - name: Авторизация
+    description: Аутентификация и Авторизация
+  - name: Менеджер
+    description: запросы Менеджера
+  - name: Организация
+    description: модуль Организация
+  - name: Склады
+    description: модуль Склады
+  - name: Зоны складов
+    description: модуль Зоны складов
+  - name: Категории ТМЦ
+    description: модуль Категории ТМЦ
+  - name: ТМЦ
+    description: модуль ТМЦ
+  - name: Единица измерения
+    description: модуль Единица измерения
+  - name: Движение товаров
+    description: модуль Движение товаров
+  - name: Пользователь
+    description: запросы Пользователя
+  - name: Инвентаризация
+    description: запросы Инвентаризация
+  - name: Товары на складе
+    description: запросы Товары на складе
+  - name: Статистика
+    description: запросы статистики организации и товаров
+paths:
+  /auth/login:
+    $ref: 'auth/entity.yaml#/auth_login'
+  /auth/logout:
+    $ref: 'auth/entity.yaml#/auth_logout'
+  /country:
+    $ref: 'country/entity.yaml#/index_store'
+  /country/{countryId}:
+    $ref: 'country/entity.yaml#/show_update_delete'
+  /region:
+    $ref: 'region/entity.yaml#/index_store'
+  /region/{regionId}:
+    $ref: 'region/entity.yaml#/show_update_delete'
+  /city:
+    $ref: 'city/entity.yaml#/index_store'
+  /city/{city}:
+    $ref: 'city/entity.yaml#/show_update_delete'
+  /counterparty:
+    $ref: 'counterparty/entity.yaml#/index_store'
+  /counterparty/{counterpartyId}:
+    $ref: 'counterparty/entity.yaml#/show_update_delete'
+  /auth/profile:
+    $ref: 'auth/entity.yaml#/profile_get_update'
+  /warehouse:
+    $ref: 'warehouse/entity.yaml#/index_store'
+  /warehouse/{warehouseId}:
+    $ref: 'warehouse/entity.yaml#/show_update_delete'
+  /warehouse-place:
+    $ref: 'warehouse_place/entity.yaml#/index_store'
+  /warehouse-place/{warehousePlaceId}:
+    $ref: 'warehouse_place/entity.yaml#/show_update_delete'
+  /product-category:
+    $ref: 'product_category/entity.yaml#/index_store'
+  /product-category/{product-categoryId}:
+    $ref: 'product_category/entity.yaml#/show_update_delete'
+  /product:
+    $ref: 'product/entity.yaml#/index_store'
+  /product/{productId}:
+    $ref: 'product/entity.yaml#/show_update_delete'
+  /product/{productId}/images:
+    $ref: 'product/entity.yaml#/add_images'
+  /product/{productId}/images/{imageId}:
+    $ref: 'product/entity.yaml#/remove_image'
+  /product-import:
+    $ref: 'product/entity.yaml#/import'
+  /unit/types:
+    $ref: 'unit/types/entity.yaml#/index'
+  /unit:
+    $ref: 'unit/entity.yaml#/index_store'
+  /unit/{unitId}:
+    $ref: 'unit/entity.yaml#/show_update_delete'
+  /manager:
+    $ref: 'users/manager/entity.yaml#/index_store'
+  /manager/{managerId}:
+    $ref: 'users/manager/entity.yaml#/show_update'
+  /manager/{userId}/warehouse/{warehouseId}:
+    $ref: 'users/manager/entity.yaml#/delete_warehouse'
+  /product-move:
+    $ref: 'product_move/entity.yaml#/index'
+  /product-move/{product-move}:
+    $ref: 'product_move/entity.yaml#/show'
+  /product-move/{product-move}/products/{product}:
+    $ref: 'product_move/entity.yaml#/show_product'
+  /product-move/receiving:
+    $ref: 'product_move/receiving/entity.yaml#/store'
+  /product-move/receiving/excel:
+    $ref: 'product_move/receiving/entity.yaml#/store_excel'
+  /product-move/receiving/{receiving}:
+    $ref: 'product_move/receiving/entity.yaml#/show_update_delete'
+  /product-move/receiving/{receiving}/products:
+    $ref: 'product_move/receiving/entity.yaml#/products'
+  /product-move/receiving/{receiving}/products/delete:
+    $ref: 'product_move/receiving/entity.yaml#/products_delete'
+  /product-move/receiving/{receiving}/close:
+    $ref: 'product_move/receiving/entity.yaml#/close'
+  /product-move/receiving/{receiving}/send-to-terminal:
+    $ref: 'product_move/receiving/entity.yaml#/send_to_terminal'
+  /user:
+    $ref: 'users/user/entity.yaml#/index_store'
+  /user/{userId}:
+    $ref: 'users/user/entity.yaml#/show_update_delete'
+  /inventory:
+    $ref: 'inventory/entity.yaml#/index_store'
+  /inventory/{inventory}:
+    $ref: 'inventory/entity.yaml#/show_update_delete'
+  /inventory/{inventory}/products:
+    $ref: 'inventory/entity.yaml#/products'
+  /inventory/{inventory}/send-to-terminal:
+    $ref: 'inventory/entity.yaml#/send_to_terminal'
+  /inventory/{inventoryId}/close:
+    $ref: 'inventory/entity.yaml#/inventory_close'        
+  /inventory/{inventory}/products/delete:
+    $ref: 'inventory/entity.yaml#/products_delete'
+  /warehouse-product:
+    $ref: 'warehouse_product/entity.yaml#/index_store'
+  /warehouse-product/{uuid}:
+    $ref: 'warehouse_product/entity.yaml#/show'
+  /warehouse-product/history/{uuid}:
+    $ref: 'warehouse_product/entity.yaml#/history'
+  /product-move/relocation:
+    $ref: 'product_move/relocation/entity.yaml#/store'
+  /product-move/relocation/{relocation}/:
+    $ref: 'product_move/relocation/entity.yaml#/show_update_delete'
+  /product-move/relocation/{relocation}/products:
+    $ref: 'product_move/relocation/entity.yaml#/products'
+  /product-move/relocation/{relocation}/products/delete:
+    $ref: 'product_move/relocation/entity.yaml#/products_delete'
+  /product-move/relocation/{relocation}/close:
+    $ref: 'product_move/relocation/entity.yaml#/close'
+  /product-move/relocation/{relocation}/send-to-terminal:
+    $ref: 'product_move/relocation/entity.yaml#/send_to_terminal'
+  /marking:
+    $ref: 'marking/entity.yaml#/index_store'
+  /marking/{markingId}:
+    $ref: 'marking/entity.yaml#/show_update'
+  /marking/{markingId}/products:
+    $ref: 'marking/entity.yaml#/product_list_update_delete'
+  /marking/{markingId}/status:
+    $ref: 'marking/entity.yaml#/update_status'
+  /marking/{markingId}/close:
+    $ref: 'marking/entity.yaml#/marking_close'       
+  /product-move/write-off:
+    $ref: 'product_move/write_off/entity.yaml#/store'
+  /product-move/write-off/{write-off}:
+      $ref: 'product_move/write_off/entity.yaml#/show_update_delete'
+  /product-move/write-off/{write-off}/products:
+    $ref: 'product_move/write_off/entity.yaml#/products'
+  /product-move/write-off/{write-off}/products/delete:
+    $ref: 'product_move/write_off/entity.yaml#/products_delete'
+  /product-move/write-off/{write-off}/close:
+    $ref: 'product_move/write_off/entity.yaml#/close'
+  /product-move/write-off/{write-off}/send-to-terminal:
+    $ref: 'product_move/write_off/entity.yaml#/send_to_terminal'
+  /mobile/receiving:
+    $ref: 'product_move/receiving/entity.yaml#/mobile_list'
+  /mobile/receiving/{id}:
+    $ref: 'product_move/receiving/entity.yaml#/mobile_show'
+  /mobile/relocation:
+    $ref: 'product_move/relocation/entity.yaml#/mobile_list'
+  /mobile/relocation/{id}:
+    $ref: 'product_move/relocation/entity.yaml#/mobile_show'
+  /mobile/write-off:
+    $ref: 'product_move/write_off/entity.yaml#/mobile_list'
+  /mobile/write-off/{id}:
+    $ref: 'product_move/write_off/entity.yaml#/mobile_show'
+  /mobile/inventory/{inventoryId}/products:
+    $ref: 'inventory/entity.yaml#/mobile_list_products'
+  /mobile/inventory/{inventoryId}:
+    $ref: 'inventory/entity.yaml#/mobile_show_doc'
+  /mobile/warehouse-product:
+    $ref: 'warehouse_product/entity.yaml#/mobile_list'
+  /mobile/warehouse-product/{uuid}:
+    $ref: 'warehouse_product/entity.yaml#/mobile_show'
+  /mobile/warehouse-product/history/{uuid}:
+    $ref: 'warehouse_product/entity.yaml#/mobile_history'
+  /mobile/marking:
+    $ref: 'marking/entity.yaml#/mobile_list'
+  /mobile/marking/{markingId}:
+    $ref: 'marking/entity.yaml#/mobile_show'
+  /mobile/marking/{markingId}/products:
+    $ref: 'marking/entity.yaml#/mobile_list_items'    
+  /mobile/inventory/{inventoryId}/close:
+    $ref: 'inventory/entity.yaml#/mobile_inventory_close'
+  /mobile/marking/{markingId}/close:
+    $ref: 'marking/entity.yaml#/mobile_marking_close'
+  /mobile/product-move/receiving/{receiving}/close:
+    $ref: 'product_move/receiving/entity.yaml#/mobile_receiving_close'
+  /mobile/relocation/{relocationId}/close:
+    $ref: 'product_move/relocation/entity.yaml#/mobile_relocation_close'
+  /statistics/by-counterparties:
+    $ref: 'statistics/entity.yaml#/by_counterparties'
+  /statistics/markable-products:
+    $ref: 'statistics/entity.yaml#product_markable'
+  /statistics/warehouse-products:
+    $ref: 'statistics/entity.yaml#warehouse_products'
+  /statistics/latest-docs:
+    $ref: 'statistics/entity.yaml#latest_docs'
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer

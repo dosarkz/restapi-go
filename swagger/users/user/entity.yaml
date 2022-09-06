@@ -1,0 +1,135 @@
+index_store:
+  get:
+    tags:
+      - Пользователь
+    summary: Список Пользователей
+    operationId: getUserList
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/User'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]
+  post:
+    tags:
+      - Пользователь
+    summary: Добавить Пользователя
+    operationId: storeUser
+    requestBody:
+      description: Параметры для заполнения
+      required: true
+      content:
+        'application/json':
+          schema:
+            $ref: 'components.yaml#/schemas/StoreUser'
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/User'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: []
+show_update_delete:
+  put:
+    tags:
+      - Пользователь
+    summary: Обновить Пользователя
+    operationId: updateUser
+    parameters:
+      - name: user_id
+        in: path
+        description: ID Пользователя
+        required: true
+        schema:
+          type: integer
+          format: int64
+    requestBody:
+      description: Параметры для заполнения
+      required: true
+      content:
+        'application/json':
+          schema:
+            $ref: 'components.yaml#/schemas/UpdateUser'
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/User'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]
+  get:
+    tags:
+      - Пользователь
+    summary: Найти Пользователя по ID
+    description: Возвращает модель выбранного Пользователя
+    operationId: getUserById
+    parameters:
+      - name: userId
+        in: path
+        description: ID Пользователя
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/User'
+      400:
+        description: Invalid ID supplied
+        content: { }
+      404:
+        description: User not found
+        content: { }
+    security:
+      - BearerAuth: [ ]
+  delete:
+    tags:
+      - Пользователь
+    summary: Удалить Пользователя
+    operationId: deleteUser
+    parameters:
+      - name: userId
+        in: path
+        description: ID Пользователя
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      400:
+        description: Invalid ID supplied
+        content: { }
+      404:
+        description: User not found
+        content: { }
+    security:
+      - BearerAuth: [ ]

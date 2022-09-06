@@ -1,0 +1,67 @@
+schemas:
+  Auth:
+    type: object
+    properties:
+      user:
+        $ref: '#/schemas/User'
+      token:
+        type: string
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      email:
+        type: string
+      iin:
+        type: string
+      counterparty:
+        $ref: '../counterparty/components.yaml#/schemas/CounterpartyUser'
+      status:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          title:
+            type: string
+      phone:
+        type: string
+      note:
+        type: string
+definitions:
+  LoginForm:
+    type: object
+    properties:
+      email:
+        type: string
+        example: "demo@qlt.kz"
+      password:
+        type: string
+        example: "******"
+  User:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "Имя"
+      password:
+        type: string
+        example: "123456"
+      email:
+        type: string
+        example: "test@mail.kz"
+      phone:
+        type: string
+        example: "77000000000"
+      note:
+        type: string
+        example: "Коммент"
+    xml:
+      name: Tag
+responses:
+  UnauthorizedError:
+    description: Access token is missing or invalid

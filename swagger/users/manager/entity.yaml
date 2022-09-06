@@ -1,0 +1,169 @@
+index_store:
+  get:
+    tags:
+      - Менеджер
+    summary: Список Менеджеров
+    operationId: getManagerList
+    parameters:
+      - name: id
+        in: query
+        description: ID
+        schema:
+          type: integer
+          format: int64
+      - name: name
+        in: query
+        description: Имя
+        schema:
+          type: string
+      - name: email
+        in: query
+        description: Email
+        schema:
+          type: string
+      - name: phone
+        in: query
+        description: Номер телефона
+        schema:
+          type: string
+      - name: warehouseId
+        in: query
+        description: Id склада
+        schema:
+          type: integer
+          format: int64
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/Manager'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]
+  post:
+    tags:
+      - Менеджер
+    summary: Добавить Менеджера
+    operationId: storeUserManager
+    requestBody:
+      content:
+        'application/json':
+          schema:
+            $ref: 'components.yaml#/schemas/StoreManager'
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/Manager'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]
+show_update:
+  put:
+    tags:
+      - Менеджер
+    summary: Обновить Менеджера
+    operationId: updateManager
+    parameters:
+      - name: manager_id
+        in: path
+        description: ID Менеджера
+        required: true
+        schema:
+          type: integer
+          format: int64
+    requestBody:
+      description: Параметры для заполнения
+      required: true
+      content:
+        'application/json':
+          schema:
+            $ref: 'components.yaml#/schemas/UpdateManager'
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/Manager'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]
+  get:
+    tags:
+      - Менеджер
+    summary: Найти Менеджерa по ID
+    description: Возвращает модель выбранного Менеджера
+    operationId: getManagerById
+    parameters:
+      - name: managerId
+        in: path
+        description: ID Менеджерa
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      200:
+        description: successful operation
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/Manager'
+      400:
+        description: Invalid ID supplied
+        content: { }
+      404:
+        description: Manager not found
+        content: { }
+    security:
+      - BearerAuth: [ ]
+delete_warehouse:
+  delete:
+    tags:
+      - Менеджер
+    summary: Удалить Склад Менеджера
+    operationId: deleteWarehouseManager
+    parameters:
+      - name: userId
+        in: path
+        description: ID Пользователя
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: warehouseId
+        in: path
+        description: ID Склада
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      400:
+        description: Invalid ID supplied
+        content: { }
+      404:
+        description: User or Warehouse not found
+        content: { }
+    security:
+      - BearerAuth: [ ]

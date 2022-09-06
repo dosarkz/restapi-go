@@ -1,0 +1,96 @@
+auth_login:
+  post:
+    tags:
+      - Авторизация
+    summary: Авторизация пользователя
+    operationId: login
+    requestBody:
+      description: Параметры для заполнения
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "components.yaml#/definitions/LoginForm"
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/Auth'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+auth_logout:
+  post:
+    tags:
+      - Авторизация
+    summary: Выйти из приложения
+    operationId: logout
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/Auth'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]
+
+profile_get_update:
+  get:
+    tags:
+      - Профиль
+    summary: Данные профиля
+    operationId: getProfile
+    responses:
+      200:
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/User'
+        description: OK
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]
+  put:
+    tags:
+      - Профиль
+    summary: Редактировать профиль
+    operationId: updateProfile
+    requestBody:
+      description: Параметры для заполнения
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "components.yaml#/definitions/User"
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/schemas/User'
+      401:
+        description: UnauthorizedError
+        content:
+          application/json:
+            schema:
+              $ref: 'components.yaml#/responses/UnauthorizedError'
+    security:
+      - BearerAuth: [ ]

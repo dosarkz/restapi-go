@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  adminer:
+    image: adminer:latest
+    container_name: "rest_adminer"
+    restart: always
+    ports:
+      - ${DOCKER_ADMINER_PORT:-8855}:8080
+    networks:
+      - rest
+  swagger-ui:
+    image: swaggerapi/swagger-ui:v4.1.0
+    container_name: "rest_swagger_ui"
+    restart: unless-stopped
+    ports:
+      - ${DOCKER_SWAGGER_UI_PORT:-8784}:8080
+    volumes:
+      - ./swagger:/usr/share/nginx/html/doc
+    networks:
+      - rest
+    environment:
+      API_URL: doc/swagger.yaml
